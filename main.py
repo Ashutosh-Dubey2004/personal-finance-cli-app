@@ -1,6 +1,7 @@
 import auth
 
 def mainMenu():
+    auth.initDB()
     while True:
         print("\n===== Personal Finance Manager =====")
         print("1. Register")
