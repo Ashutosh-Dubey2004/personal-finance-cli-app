@@ -1,81 +1,96 @@
 import sqlite3
-import os
-import msvcrt
 from passlib.hash import bcrypt
 
+import ui_utils
+
+DB_NAME = "finance.db"
+
 def initDB():
-    conn = sqlite3.connect("finance.db")
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   username TEXT UNIQUE NOT NULL,
-                   password TEXT NOT NULL
-                   )
-        ''')
-    cursor.close()
-
-def getPassword(prompt="Password: "):
-    print(prompt, end='', flush=True)
-    password = ""
-    while True:
-        ch = msvcrt.getch()
-        if ch in {b'\r', b'\n'}:  # Enter
-            print('')
-            break
-        elif ch == b'\x08':  # Backspace
-            if len(password) > 0:
-                password = password[:-1]
-                print('\b \b', end='', flush=True)
-        elif ch == b'\x03':  # Ctrl+C
-            raise KeyboardInterrupt
-        else:
-            try:
-                char = ch.decode('utf-8')
-                password += char
-                print('*', end='', flush=True)
-            except UnicodeDecodeError:
-                continue
-    return password
-
-
-def register():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("\n Register New User")
-    username = input("Enter a username: ")
-    password = getPassword("Enter a password: ")
-    hashed = bcrypt.hash(password)
-    
-    conn = sqlite3.connect("finance.db")
-    cursor = conn.cursor()
-    try:
-        cursor.execute("INSERT INTO users (username, password) VALUES (?,?)", (username, hashed))
-        conn.commit()
-        print("Registration successful!")
-    except sqlite3.IntegrityError:
-         print("Username already exists.")
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
     conn.close()
 
-def login():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("\n Login")
-    username = input("Username: ")
-    password = getPassword("Password: ")
+def register():
+    ui_utils.clear()
+    ui_utils.banner("Register New User")
 
-    conn = sqlite3.connect("finance.db")
+    while True:
+        username = input(" Enter a username: ").strip()
+        if not username:
+            print(" Username cannot be empty. Please try again.\n")
+            continue
+
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username FROM users WHERE username = ?", (username,))
+        if cursor.fetchone():
+            print(" Username already exists. Please choose a different one.\n")
+            conn.close()
+            continue
+        conn.close()
+        break
+
+    while True:
+        password = ui_utils.get_password(" Enter a password: ")
+        if not password:
+            print(" Password cannot be empty. Please try again.\n")
+            continue
+        break
+
+    hashed_password = bcrypt.hash(password)
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+        print("\n Registration successful! You can now log in.")
+    except Exception as e:
+        print(f" Error: {e}")
+    finally:
+        conn.close()
+        ui_utils.pause()
+
+def login():
+    ui_utils.clear()
+    ui_utils.banner("User Login")
+
+    username = input(" Username: ").strip()
+    if not username:
+        print(" Username cannot be empty.")
+        ui_utils.pause()
+        return False
+
+    password = ui_utils.get_password(" Password: ")
+    if not password:
+        print(" Password cannot be empty.")
+        ui_utils.pause()
+        return False
+
+    conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
     row = cursor.fetchone()
     conn.close()
 
     if row and bcrypt.verify(password, row[0]):
-        print(f"Welcome back, {username}!")
+        print(f"\n Welcome back, {username}!")
+        ui_utils.pause()
         return True
     else:
-        print("Invalid credentials.")
+        print(" Invalid username or password.")
+        ui_utils.pause()
         return False
-
+    
 if __name__ == "__main__":
-    initDB()
-    register()
+    # initDB()
+    # register()
     login()
