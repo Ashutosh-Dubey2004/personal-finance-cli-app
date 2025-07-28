@@ -2,21 +2,7 @@ import sqlite3
 from passlib.hash import bcrypt
 
 import ui_utils
-
-DB_NAME = "finance.db"
-
-def initDB():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    ''')
-    conn.commit()
-    conn.close()
+from db_init import DB_NAME
 
 def register():
     ui_utils.clear()
@@ -77,14 +63,14 @@ def login():
 
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+    cursor.execute("SELECT id, password FROM users WHERE username = ?", (username,))
     row = cursor.fetchone()
     conn.close()
 
-    if row and bcrypt.verify(password, row[0]):
+    if row and bcrypt.verify(password, row[1]):
         print(f"\n Welcome back, {username}!")
         ui_utils.pause()
-        return True
+        return row[0]
     else:
         print(" Invalid username or password.")
         ui_utils.pause()
