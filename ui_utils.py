@@ -2,6 +2,23 @@ import os
 import time
 import msvcrt
 
+CATEGORIES = ['Food', 'Rent', 'Salary', 'Transport', 'Health', 'Entertainment', 'Utilities', 'Other']
+
+def choose_category():
+    print("\nSelect a Category:")
+    for i, cat in enumerate(CATEGORIES, 1):
+        print(f"{i}. {cat}")
+    while True:
+        try:
+            choice = int(input("Enter your choice (1–{}): ".format(len(CATEGORIES))))
+            if 1 <= choice <= len(CATEGORIES):
+                return CATEGORIES[choice - 1]
+            else:
+                print("Invalid choice. Please select a valid number.")
+        except ValueError:
+            print("Please enter a number.")
+
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
