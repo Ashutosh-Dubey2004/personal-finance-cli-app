@@ -61,3 +61,65 @@ def generateFinancialReport(current_user_id):
 
     conn.close()
     pause()
+
+def showMonthlySummary(current_user_id):
+    now = datetime.now()
+    month = now.strftime("%m")
+    year = now.strftime("%Y")
+
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT type, amount FROM transactions 
+        WHERE user_id = ? AND date LIKE ?
+    """, (current_user_id, f"{year}-{month}%",))
+
+    rows = cursor.fetchall()
+
+    if not rows:
+        print("\nNo transactions found for current month.")
+        conn.close()
+        return
+
+    total_income = sum(amount for t_type, amount in rows if t_type.lower() == 'income')
+    total_expense = sum(amount for t_type, amount in rows if t_type.lower() == 'expense')
+    net_savings = total_income - total_expense
+
+    banner("📅 Monthly Summary")
+    print(f"Month: {month}-{year}")
+    print(f"Total Income   : ₹{total_income:,.2f}")
+    print(f"Total Expenses : ₹{total_expense:,.2f}")
+    print(f"Net Savings    : ₹{net_savings:,.2f}")
+    conn.close()
+
+import csv
+
+def exportTransactionsToCSV(current_user_id, filename='transactions_export.csv'):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT date, type, category, amount, note 
+        FROM transactions 
+        WHERE user_id = ?
+        ORDER BY date DESC
+    """, (current_user_id,))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    if not rows:
+        print("\nNo transactions available to export.")
+        pause()
+        return
+
+    try:
+        with open(filename, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerow(['Date', 'Type', 'Category', 'Amount', 'Note'])  # Header
+            writer.writerows(rows)
+        print(f"\n✅ Transactions exported successfully to '{filename}'")
+    except Exception as e:
+        print(f"❌ Error while exporting: {e}")
+    pause()

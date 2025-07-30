@@ -74,6 +74,6 @@ def checkBudgetWarning(user_id):
 
         if total_spent > budget_amount:
             print(f"Budget exceeded in '{category}'. Spent: ₹{total_spent:.2f} / Budget: ₹{budget_amount:.2f}")
-
+            pause()
+            
     conn.close()
-    pause()

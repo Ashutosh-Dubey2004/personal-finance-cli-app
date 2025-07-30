@@ -3,6 +3,7 @@ from passlib.hash import bcrypt
 
 import ui_utils
 from db_init import DB_NAME
+from report import showMonthlySummary  # NEW: Import monthly summary
 
 def register():
     ui_utils.clear()
@@ -63,20 +64,38 @@ def login():
 
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, password FROM users WHERE username = ?", (username,))
+    cursor.execute("SELECT id, password, login_count FROM users WHERE username = ?", (username,))
     row = cursor.fetchone()
-    conn.close()
 
     if row and bcrypt.verify(password, row[1]):
+        user_id = row[0]
+        login_count = (row[2] or 0) + 1
+
+        # Update login count
+        cursor.execute("UPDATE users SET login_count = ? WHERE id = ?", (login_count, user_id))
+        conn.commit()
+        conn.close()
+
         print(f"\n Welcome back, {username}!")
+
+        # Show monthly summary
+        showMonthlySummary(user_id)
+
+        # Backup reminder after every 10 logins
+        if login_count % 10 == 0:
+            print("\n📦 You haven't backed up in a while.")
+            choice = input(" Do you want to create a backup now? (Y/N): ").strip().lower()
+            if choice == 'y':
+                from backup import create_backup
+                create_backup(user_id)
+
         ui_utils.pause()
-        return row[0]
+        return user_id
     else:
+        conn.close()
         print(" Invalid username or password.")
         ui_utils.pause()
         return False
-    
+
 if __name__ == "__main__":
-    # initDB()
-    # register()
     login()

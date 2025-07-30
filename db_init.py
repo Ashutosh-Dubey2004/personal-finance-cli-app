@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 DB_NAME = "finance.db"
 
@@ -10,7 +11,9 @@ def initDB():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            login_count INTEGER DEFAULT 0,
+            last_backup_date TEXT DEFAULT NULL
         )
     ''')
     conn.commit()
@@ -52,3 +55,9 @@ def initBudgetTable():
     ''')
     conn.commit()
     conn.close()
+
+def initializeAllTables():
+    """Initialize all necessary tables at once."""
+    initDB()
+    initTransactionsTable()
+    initBudgetTable()
