@@ -3,7 +3,7 @@ from passlib.hash import bcrypt
 
 import ui_utils
 from db_init import DB_NAME
-from report import showMonthlySummary  # NEW: Import monthly summary
+from report import showMonthlySummary  
 
 def register():
     ui_utils.clear()
@@ -71,19 +71,16 @@ def login():
         user_id = row[0]
         login_count = (row[2] or 0) + 1
 
-        # Update login count
         cursor.execute("UPDATE users SET login_count = ? WHERE id = ?", (login_count, user_id))
         conn.commit()
         conn.close()
 
         print(f"\n Welcome back, {username}!")
 
-        # Show monthly summary
         showMonthlySummary(user_id)
 
-        # Backup reminder after every 10 logins
         if login_count % 10 == 0:
-            print("\n📦 You haven't backed up in a while.")
+            print("\n You haven't backed up in a while.")
             choice = input(" Do you want to create a backup now? (Y/N): ").strip().lower()
             if choice == 'y':
                 from backup import create_backup

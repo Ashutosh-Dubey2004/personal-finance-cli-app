@@ -86,7 +86,7 @@ def showMonthlySummary(current_user_id):
     total_expense = sum(amount for t_type, amount in rows if t_type.lower() == 'expense')
     net_savings = total_income - total_expense
 
-    banner("📅 Monthly Summary")
+    banner("Monthly Summary")
     print(f"Month: {month}-{year}")
     print(f"Total Income   : ₹{total_income:,.2f}")
     print(f"Total Expenses : ₹{total_expense:,.2f}")
@@ -117,9 +117,9 @@ def exportTransactionsToCSV(current_user_id, filename='transactions_export.csv')
     try:
         with open(filename, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(['Date', 'Type', 'Category', 'Amount', 'Note'])  # Header
+            writer.writerow(['Date', 'Type', 'Category', 'Amount', 'Note'])  
             writer.writerows(rows)
-        print(f"\n✅ Transactions exported successfully to '{filename}'")
+        print(f"\n Transactions exported successfully to '{filename}'")
     except Exception as e:
-        print(f"❌ Error while exporting: {e}")
+        print(f" Error while exporting: {e}")
     pause()
