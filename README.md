@@ -123,27 +123,6 @@ Want to improve this project?
 5. Open a Pull Request 🚀
 
 ---
-## 🧾 Internship Task Information
-
-This project was developed as part of my internship at **InnoByte Services**.  
-**Project ID:** UY6758GH  
-**Role:** Python Developer Intern (Remote)  
-**Internship Duration:** July 20th, 2025 – August 14th, 2025  
-**Task Title:** Develop a Personal Finance Management Application
-
-### 🎯 Objective
-Create a command-line application that helps users manage their personal finances by tracking income, expenses, and generating financial reports.
-
-### 📋 Task Breakdown (As per internship guideline)
-1. **User Authentication** – Registration & login system 
-2. **Income/Expense Tracking** – Add, update, delete, categorize  
-3. **Financial Reports** – Monthly & yearly summaries   
-4. **Budgeting System** – Set and monitor budgets   
-5. **Data Persistence** – SQLite integration, backup/restore   
-6. **Testing & Documentation** – Unit testing and user manual
-
----
-
 ## 👨‍💻 Author
 
 **Ashutosh Dubey**  
