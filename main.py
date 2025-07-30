@@ -4,6 +4,7 @@ from auth import register, login
 from tracker import addTransaction, viewTransaction, deleteTransaction, editTransaction
 from report import generateFinancialReport
 from budget import setBudget, viewBudgets, checkBudgetWarning
+from backup import backupDatabase, restoreDatabase
 
 def mainMenu():
     while True:
@@ -34,7 +35,9 @@ def mainMenu():
                             print("5. Generate Financial Report")
                             print("6. Set Monthly Budget")
                             print("7. View Budget Summary")
-                            print("8. Logout")
+                            print("8. Backup Data")
+                            print("9. Restore Data")
+                            print("10. Logout")
 
                             sub_choice = input("Enter your choice: ").strip()
 
@@ -61,6 +64,12 @@ def mainMenu():
                                 viewBudgets(userId)
                                 clear()
                             elif sub_choice == "8":
+                                backupDatabase()
+                                clear()
+                            elif sub_choice == "9":
+                                restoreDatabase()
+                                clear()
+                            elif sub_choice == "10":
                                 print("Logging out...")
                                 pause()
                                 clear()
