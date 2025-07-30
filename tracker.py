@@ -11,7 +11,7 @@ def addTransaction(user_id):
     try:
         while True:
             amount_input = input("Enter amount: ").strip()
-            if amount_input == "":
+            if not amount_input:
                 print("Amount cannot be empty.")
                 continue
             try:
@@ -22,24 +22,24 @@ def addTransaction(user_id):
                 break
             except ValueError:
                 print("Invalid amount. Please enter a number.")
-                
+
         while True:
             trans_type = input("Type ('income' or 'expense'): ").strip().lower()
-            if trans_type not in ['income', 'expense']:
-                print("Invalid type. Please enter 'income' or 'expense'.")
-                continue
-            break
+            if trans_type in ['income', 'expense']:
+                break
+            print("Invalid type. Please enter 'income' or 'expense'.")
 
         category = choose_category()
         note = input("Add a note (optional): ").strip()
 
         while True:
-            date = input("Enter date (YYYY-MM-DD) [leave empty for today]: ").strip()
-            if date == "":
+            date_input = input("Enter date (YYYY-MM-DD) [leave empty for today]: ").strip()
+            if not date_input:
                 date = datetime.datetime.now().strftime("%Y-%m-%d")
                 break
             try:
-                datetime.datetime.strptime(date, "%Y-%m-%d")
+                datetime.datetime.strptime(date_input, "%Y-%m-%d")
+                date = date_input
                 break
             except ValueError:
                 print("Invalid date format. Please enter in YYYY-MM-DD format.")
@@ -53,9 +53,9 @@ def addTransaction(user_id):
         conn.commit()
         conn.close()
 
-        print("\nTransaction added successfully!\n")
+        print("\nTransaction added successfully.")
     except Exception as e:
-        print(f" Error adding transaction: {e}")
+        print(f"Error adding transaction: {e}")
     finally:
         pause()
 

@@ -1,8 +1,10 @@
-from db_init import initDB, initTransactionsTable
+from db_init import initDB, initTransactionsTable, initBudgetTable
 from ui_utils import banner, clear, pause
 from auth import register, login
 from tracker import addTransaction, viewTransaction, deleteTransaction, editTransaction
 from report import generateFinancialReport
+from budget import setBudget, viewBudgets, checkBudgetWarning
+
 def mainMenu():
     while True:
         try:
@@ -27,29 +29,38 @@ def mainMenu():
                             banner("Dashboard")
                             print("1. Add Transaction")
                             print("2. View Transactions")
-                            print("3. Edit Transactions")
-                            print("4. Delete Transactions")
+                            print("3. Edit Transaction")
+                            print("4. Delete Transaction")
                             print("5. Generate Financial Report")
-                            print("6. Logout")
+                            print("6. Set Monthly Budget")
+                            print("7. View Budget Summary")
+                            print("8. Logout")
 
-                            choice = input("Enter Choice: ").strip()
+                            sub_choice = input("Enter your choice: ").strip()
 
-                            if choice == "1":
+                            if sub_choice == "1":
                                 addTransaction(userId)
+                                checkBudgetWarning(userId)
                                 clear()
-                            elif choice == "2":
+                            elif sub_choice == "2":
                                 viewTransaction(userId)
                                 clear()
-                            elif choice == "3":
+                            elif sub_choice == "3":
                                 editTransaction(userId)
                                 clear()
-                            elif choice == "4":
+                            elif sub_choice == "4":
                                 deleteTransaction(userId)
                                 clear()
-                            elif choice == "5":
+                            elif sub_choice == "5":
                                 generateFinancialReport(userId)
                                 clear()
-                            elif choice == "6":
+                            elif sub_choice == "6":
+                                setBudget(userId)
+                                clear()
+                            elif sub_choice == "7":
+                                viewBudgets(userId)
+                                clear()
+                            elif sub_choice == "8":
                                 print("Logging out...")
                                 pause()
                                 clear()
@@ -74,4 +85,5 @@ def mainMenu():
 if __name__ == "__main__":
     initDB()
     initTransactionsTable()
+    initBudgetTable()
     mainMenu()
