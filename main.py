@@ -2,7 +2,7 @@ from db_init import initDB, initTransactionsTable
 from ui_utils import banner, clear, pause
 from auth import register, login
 from tracker import addTransaction, viewTransaction, deleteTransaction, editTransaction
-
+from report import generateFinancialReport
 def mainMenu():
     while True:
         try:
@@ -29,7 +29,8 @@ def mainMenu():
                             print("2. View Transactions")
                             print("3. Edit Transactions")
                             print("4. Delete Transactions")
-                            print("5. Logout")
+                            print("5. Generate Financial Report")
+                            print("6. Logout")
 
                             choice = input("Enter Choice: ").strip()
 
@@ -46,6 +47,9 @@ def mainMenu():
                                 deleteTransaction(userId)
                                 clear()
                             elif choice == "5":
+                                generateFinancialReport(userId)
+                                clear()
+                            elif choice == "6":
                                 print("Logging out...")
                                 pause()
                                 clear()

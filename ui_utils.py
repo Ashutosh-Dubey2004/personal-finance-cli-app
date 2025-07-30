@@ -22,7 +22,7 @@ def choose_category():
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def pause(msg=" Press Enter to continue..."):
+def pause(msg="Press Enter to continue..."):
     input(msg)
 
 def banner(title):
